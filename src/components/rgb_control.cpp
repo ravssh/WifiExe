@@ -1,15 +1,32 @@
-#include <Arduino.h>
-#include <FreeRTOS.h>
-#include <task.h>
+#include "rgb_control.h"
 
+// Change the value w.r.t. your configuration
 const int pin = 21;
 int blink_delay = 50;
-TaskHandle_t end_rgb_blink = NULL, end_rgb_idle = NULL;
 
-void blinker(void *pvParameters)
+TaskHandle_t hndl_rgb_blink = nullptr, hndl_rgb_idle = nullptr;
+
+// Wrapper function
+void blink(bool check)
 {
-    // int del = *((int *)pvParameters);
-    while (1)
+    if (check == true)
+    {
+        vTaskResume(hndl_rgb_blink);
+    }
+    else
+    {
+        vTaskResume(hndl_rgb_idle);
+    }
+}
+
+void blink_task(void *temp)
+{
+    (void)temp; // Unwanted
+
+    vTaskSuspend(hndl_rgb_idle);
+    vTaskDelay(pdMS_TO_TICKS(100));
+
+    while (true)
     {
         neopixelWrite(pin, 0, 64, 64);
         vTaskDelay(pdMS_TO_TICKS(blink_delay));
@@ -18,11 +35,16 @@ void blinker(void *pvParameters)
     }
 }
 
-void idle(void *pvParameters)
+void idle_task(void *temp)
 {
-    while (1)
+    (void)temp; // Unwanted
+
+    vTaskSuspend(hndl_rgb_blink);
+    vTaskDelay(pdMS_TO_TICKS(100));
+
+    while (true)
     {
-        for (int i = 64, j = 0, k = 0; i >= 0; i++, j++, k++)
+        for (int i = 64, j = 0, k = 64; i >= 0; i--, j++, k--)
         {
             neopixelWrite(pin, k, j, i);
             vTaskDelay(pdMS_TO_TICKS(blink_delay));
@@ -30,30 +52,30 @@ void idle(void *pvParameters)
     }
 }
 
-void rgb_tasks()
+// Initialise RGB tasks & suspend them
+void setup_rgb()
 {
     // Create RGB blinker task pinned to core 1
     xTaskCreatePinnedToCore(
-        blinker,        // Function Name
-        "blink_rgb",    // Task name
-        2000,           // Stack size
-        NULL,           // When no parameter is used, simply pass NULL
-        1,              // Priority
-        &end_rgb_blink, // Task handle
-        1               // Core on which the task will run
+        blink_task,      // Function Name
+        "blink_rgb",     // Task name
+        2000,            // Stack size
+        nullptr,         // When no parameter is used, simply pass NULL
+        1,               // Priority
+        &hndl_rgb_blink, // Task handle
+        1                // Core on which the task will run
     );
-    vTaskSuspend(end_rgb_blink);
+    vTaskSuspend(hndl_rgb_blink);
     // Create RGB idle task pinned to core 1
     xTaskCreatePinnedToCore(
-        idle,          // Function Name
-        "idle_rgb",    // Task name
-        2000,          // Stack size
-        NULL,          // When no parameter is used, simply pass NULL
-        1,             // Priority
-        &end_rgb_idle, // Task handle
-        1              // Core on which the task will run
+        idle_task,      // Function Name
+        "idle_rgb",     // Task name
+        2000,           // Stack size
+        nullptr,        // When no parameter is used, simply pass NULL
+        1,              // Priority
+        &hndl_rgb_idle, // Task handle
+        1               // Core on which the task will run
     );
-    vTaskSuspend(end_rgb_idle);
-    neopixelWrite(21, 0, 0, 0);
-    delay(50);
+    vTaskSuspend(hndl_rgb_idle);
+    neopixelWrite(pin, 0, 0, 0);
 }

@@ -1,28 +1,26 @@
-#include <Arduino.h>
-#include <FreeRTOS.h>
-#include <task.h>
+#include "components/exescript.h"
 #include "components/rgb_control.h"
 #include "components/wifi_server.h"
 
-extern int blink_delay;
-extern USBHIDKeyboard Keyboard;
-
 void setup()
 {
-  // Use only for debugging
+  // Use only for debugging - (May affect performance)
   // Serial.begin(115200);
+
+  // Initialize Tasks
+  setup_rgb();
   setup_usb();
-  setupWiFiServer();
-  rgb_tasks();
-  create_write_task();
+  setup_WiFi();
 }
 
 void loop()
 {
+  // Check web requests
   server.handleClient();
 
+  // If SD-MSC mode, keep a delay
   if (check_delay)
-  {     
+  {
     delay(200);
   }
 }

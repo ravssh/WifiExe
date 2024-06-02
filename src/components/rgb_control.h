@@ -2,8 +2,11 @@
 #ifndef RGB_CONTROL_H
 #define RGB_CONTROL_H
 
+#include <Arduino.h>
+#include <FreeRTOS.h>
+#include <task.h>
+
 // Function declarations
-void blinker(void *pvParameters);
-void idle(void *pvParameters);
-void rgb_tasks();
+void setup_rgb();
+void blink(bool check); // default value = true
 #endif

