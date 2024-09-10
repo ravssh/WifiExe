@@ -8,7 +8,7 @@ void setup()
   // Serial.begin(115200);
 
   // Initialize Tasks
-  setup_rgb();
+  rgb_init();
   setup_usb();
   setup_WiFi();
 }

