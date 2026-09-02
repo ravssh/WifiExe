@@ -8,11 +8,16 @@ void setup()
 {
   // If you want serial debug, enable this:
   // Serial.begin(115200);
+  // delay(1000);
+  // Serial.println("\n\nStarting WifiExe...");
 
   // Initialize Tasks
   rgb_init();
   setup_usb();
   setup_WiFi();
+  
+  // Signal successful boot with LED
+  led_idle(0, 1, 0); // Green idle LED
 }
 
 void loop()

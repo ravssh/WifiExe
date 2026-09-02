@@ -1,9 +1,7 @@
 #include "rgb_control.h"
-
 #include <esp_log.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
-
 #include "neopixel_wrapper.h"
 
 static const char *TAG = "rgb_control";
