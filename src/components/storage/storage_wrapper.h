@@ -14,3 +14,4 @@
 // Function declarations
 void mount_storage();
 void eject_storage();
+bool isBootButtonClicked();

@@ -59,8 +59,7 @@ bool isBootButtonClicked()
 void mount_storage()
 {
   // Prevent LED from starting
-  vTaskSuspend(xTaskGetHandle("blink_rgb"));
-  vTaskSuspend(xTaskGetHandle("idle_rgb"));
+  vTaskSuspend(xTaskGetHandle("led_task"));
 
   pinMode(GPIO_NUM_2, OUTPUT);
 
