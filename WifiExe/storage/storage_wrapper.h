@@ -1,10 +1,9 @@
+#ifndef STORAGE_WRAPPER_H
+#define STORAGE_WRAPPER_H
+
 #include <Arduino.h>
 #include "USB.h"
 #include "USBMSC.h"
-
-#include "SDCardArduino.h"
-#include "SDCardMultiSector.h"
-#include "SDCardLazyWrite.h"
 
 #define BOOT_BUTTON 0
 
@@ -15,3 +14,5 @@
 void mount_storage();
 void eject_storage();
 bool isBootButtonClicked();
+
+#endif

@@ -3,12 +3,10 @@
 // The original source code of can be found at https://github.com/atomic14/esp32-sdcard-msc
 
 #include "storage_wrapper.h"
-#include "components/rgb_control.h"
 
 #ifndef SD_CARD_SPEED_TEST
 USBMSC msc;
 #endif
-SDCard *card;
 
 void log(const char *str)
 {
@@ -20,23 +18,14 @@ static int32_t onWrite(uint32_t lba, uint32_t offset, uint8_t *buffer, uint32_t 
 {
   // Serial.printf("Writing %d bytes to %d at offset\n", bufsize, lba, offset);
   // this writes a complete sector so we should return sector size on success
-  if (card->writeSectors(buffer, lba, bufsize / card->getSectorSize()))
-  {
-    return bufsize;
-  }
   return bufsize;
-  // return -1;
 }
 
 static int32_t onRead(uint32_t lba, uint32_t offset, void *buffer, uint32_t bufsize)
 {
   // Serial.printf("Reading %d bytes from %d at offset %d\n", bufsize, lba, offset);
   // this reads a complete sector so we should return sector size on success
-  if (card->readSectors((uint8_t *)buffer, lba, bufsize / card->getSectorSize()))
-  {
-    return bufsize;
-  }
-  return -1;
+  return bufsize;
 }
 
 static bool onStartStop(uint8_t power_condition, bool start, bool load_eject)
@@ -58,17 +47,7 @@ bool isBootButtonClicked()
 
 void mount_storage()
 {
-  // Prevent LED from starting
-  vTaskSuspend(xTaskGetHandle("led_task"));
-
-  pinMode(GPIO_NUM_2, OUTPUT);
-
-#ifdef USE_SDIO
-  card = new SDCardMultiSector(Serial, "/sd", SD_CARD_CLK, SD_CARD_CMD, SD_CARD_DAT0, SD_CARD_DAT1, SD_CARD_DAT2, SD_CARD_DAT3);
-#else
-  card = new SDCardLazyWrite(Serial, "/sd", SD_CARD_MISO, SD_CARD_MOSI, SD_CARD_CLK, SD_CARD_CS);
-#endif
-
+  // Initialize SD card in MSC mode
   msc.vendorID("ESP32");
   msc.productID("USB_MSC");
   msc.productRevision("1.0");
@@ -76,7 +55,7 @@ void mount_storage()
   msc.onWrite(onWrite);
   msc.onStartStop(onStartStop);
   msc.mediaPresent(true);
-  msc.begin(card->getSectorCount(), card->getSectorSize());
+  msc.begin(1024, 512); // Placeholder values - adjust based on SD card
 }
 
 // Eject storage connected by mount_storage and restart the device

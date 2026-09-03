@@ -93,7 +93,7 @@ const char *rootViewHTML = R"(
 <body>
     <h1>Wifi-Exe</h1>
     <div class="button-container">
-        <button onclick="location.href='/folder?path='/">View Root Directory</button>
+        <button onclick="location.href='/folder?path=/'" >View Root Directory</button>
         <button onclick='executePayloadFunction()'>Execute Payload</button>
         <button onclick="location.href='/restart'">Disconnect & Restart</button>
         <button onclick='executeMountFunction()'>Mount Storage</button>

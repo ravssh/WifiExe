@@ -1,13 +1,15 @@
-#include "components/exescript.h"
-#include "components/rgb_control.h"
-#include "components/wifi_server.h"
+// WifiExe.ino
+#include "project_config.h"     // bring in the defines that were build_flags
+#include "exescript.h"
+#include "rgb_control.h"
+#include "wifi_server.h"
 
 void setup()
 {
-  // Use only for debugging - (May affect performance)
+  // If you want serial debug, enable this:
   // Serial.begin(115200);
   // delay(1000);
-  // Serial.println("Starting WifiExe...");
+  // Serial.println("\n\nStarting WifiExe...");
 
   // Initialize Tasks
   rgb_init();

@@ -5,7 +5,6 @@
 #include <WebServer.h>
 
 extern WebServer server;
-extern bool check_delay;
 
 void setup_WiFi();
 
